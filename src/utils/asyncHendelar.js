@@ -1,6 +1,6 @@
 const asynchandelar=(requsthandelar)=>{
 
-    (req,res,next)=>{
+   return (req,res,next)=>{
         Promise.resolve(requsthandelar(req,res,next)).catch((err)=>next(err))
     }
 
