@@ -3,7 +3,8 @@ import {ApiError} from "../utils/ApiError.js"
 import { User} from "../models/user.model.js"
 import {uploadCloudinary} from "../utils/cloudinary.js"
 import {ApiResponse} from "../utils/ApiResponse.js"
-
+import jwt from "jsonwebtoken"
+import mongoose from "mongoose";
 
 const registerUser=asynchandelar(async(req,res)=>{
   
@@ -18,7 +19,7 @@ const registerUser=asynchandelar(async(req,res)=>{
       
 
    }
-  const existeduser=User.findOne({
+  const existeduser=await User.findOne({
    $or:[{username},{email}]
   })
   if(existeduser){
@@ -35,7 +36,7 @@ const registerUser=asynchandelar(async(req,res)=>{
     }
 
   if(!avatarLocalPath){
-   throw new ApiError(400,"avtar is required");
+   throw new ApiError(400,"avatar is required local not include");
    
   }
 
@@ -66,7 +67,7 @@ if(!cretedUser){
 }
 
 return res.status(201).json(
-   new ApiResponse(200,cretedUser,"user register succesfully");
+   new ApiResponse(200,cretedUser,"user register succesfully")
 )
 
 
