@@ -1,33 +1,35 @@
 import { v2 as cloudinary } from 'cloudinary';
-import fs from "fs"
+import fs from "fs";
+import streamifier from 'streamifier';
+// Configuration
+
+// Ensure you load environment variables from your .env file (if not done already)
+import dotenv from 'dotenv';
+dotenv.config();
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 
+// Upload a file
+const uploadCloudinary = (fileBuffer, fileType) => {
+  return new Promise((resolve, reject) => {
+    const uploadStream = cloudinary.uploader.upload_stream(
+      { resource_type: fileType.startsWith('image') ? 'image' : 'auto' },
+      (error, result) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(result);
+        }
+      }
+    );
 
-    // Configuration
-    cloudinary.config({ 
-        cloud_name: process.env.CLOUDINARY_CLOUD_NAME, 
-        api_key: process.env.CLOUDINARY_API_KEY, 
-        api_secret:process.env.CLOUDINARY_API_SECRET // Click 'View API Keys' above to copy your API secret
-    });
-    
+    streamifier.createReadStream(fileBuffer).pipe(uploadStream);
+  });
+};
 
-    // Upload a file
- const uploadCloudinary=async (localFilePath)=>{
-    try {
-        if(!localFilePath)return null
-        
-        //upload file on cloudanary
-      const response=await  cloudinary.uploader.upload(localFilePath,{
-            resource_type: "auto"
-        })
-        console.log("fule is upload on cloudinary",response.url);
-
-        return response
-    } catch (error) {
-        fs.unlinkSync(localFilePath)//remove the locally save temopary file
-        return null
-    }
-
- }
- export {uploadCloudinary}
- 
+export { uploadCloudinary };

@@ -29,7 +29,7 @@ const userSchema=new Schema({
         index:true,
     },
 
-    avtar:{
+    avatar:{
         type:String,
         required:true,
     },
@@ -49,7 +49,7 @@ const userSchema=new Schema({
         required:[true,'passeword requried'],
 
         },
-        refreshToken:{
+     refreshToken:{
             type:String,
 
 
@@ -66,36 +66,36 @@ const userSchema=new Schema({
 },{timestamps:true});
 
 
-userSchema.pre("save",async function (next) {
-    if (!this.isModified("password"))return next(); 
-    this.password=bcrypt.hash(this.password,10)
-    next()  
-})
+userSchema.pre('save', async function (next) {
+    if (!this.isModified('password')) return next();
+    this.password = await bcrypt.hash(this.password, 10);
+    next();
+});
 
-userSchema.methods.isPasswordCorrect=async function (password) {
- return  await bcrypt.compare(password,this.password);
-    
-}
+// import bcrypt from 'bcryptjs';
+
+userSchema.methods.isPasswordCorrect = async function (password) {
+    return await bcrypt.compare(password, this.password);
+};
+
 userSchema.methods.generateAcessToken=function(){
-    jwt.sign(
+   return jwt.sign(
         {
             _id:this._id,
             email:this.email,
             username:this.username,
             fullname:this.fullname
-
-
         },
         
         process.env.ACCESS_TOKEN_SECRET,{
-            expiresIn:process.env.ACCESS_TOKEN_EXPIRY
+            expiresIn: process.env.ACCESS_TOKEN_EXPIRY
         }
 
     )
 }
 
 userSchema.methods.generateRefToken=function(){
-     jwt.sign(
+  return   jwt.sign(
         {
             _id:this._id,
            
