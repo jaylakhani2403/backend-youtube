@@ -313,7 +313,7 @@ const getChennalUserProfile = asynchandelar(async (req, res) => {
                 isSubscribed:{
                     $cond: {
                         if: { $in: [req.user._id, "$subscribers.subscribers"] },
-                        then:true
+                        then:true,
                         else:false
 
                     }
@@ -342,10 +342,18 @@ const getChennalUserProfile = asynchandelar(async (req, res) => {
         throw new ApiError(400,"chenal dose not exist");
     }
 
-    return res.status(200).json(nee ApiResponse(200,channel[0],"user chhenal fetch succes fully"))
+    return res.status(200).json(new ApiResponse(200,channel[0],"user chhenal fetch succes fully"))
 
 })
-
+const getWatchHistory=asynchandelar(async(req,res)=>{
+    const user=await User.aggregate([
+        {
+            $match:{
+                _id: new mongoose
+            }
+        }
+    ])
+})
 
 
 
